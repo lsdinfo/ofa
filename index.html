@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0b5394">
+<link rel="icon" href="icon-192.png">
+<title>OFAM / Mulimix – calcolatore</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:system-ui,sans-serif;margin:0;background:#f3f5f8;color:#1b2430}
+header{background:#0b5394;color:#fff;padding:12px 16px}
+header h1{margin:0;font-size:1.15rem}
+header small{opacity:.85}
+main{max-width:900px;margin:auto;padding:12px}
+.card{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px #0002}
+.card h2{margin:0 0 8px;font-size:1.05rem;color:#0b5394}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+label{display:block;font-size:.85rem;font-weight:600;margin-bottom:3px}
+input,select{width:100%;padding:9px;font-size:1rem;border:1px solid #b8c2cf;border-radius:6px}
+input[type=checkbox]{width:auto}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+td,th{padding:5px 6px;border-bottom:1px solid #e3e8ee;text-align:left}
+td.v{font-weight:700;white-space:nowrap}
+.big{font-size:1.3rem;font-weight:800;color:#b00020}
+.note{font-size:.82rem;color:#556}
+.warn{background:#fff4e5;border-left:4px solid #e69500;padding:8px;font-size:.85rem;border-radius:4px}
+.tag{display:inline-block;background:#e6f0fa;border-radius:4px;padding:1px 6px;font-size:.8rem}
+table,tbody{display:block}tr{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:8px 0;border-bottom:1px solid #e3e8ee}td,th{border:0;padding:0}td.v{text-align:right;white-space:normal}td.note{grid-column:1/-1;font-size:.9rem;color:#445}.big{font-size:1.35rem}main{padding:8px}.card{padding:10px}
+</style>
+</head>
+<body>
+<header><h1>OFAM – Mulimix (Mulier &amp; Zadonsky)</h1><small>Calcolatore dosi · protocollo ed. 2010, aggiornato Nov 2024</small></header>
+<main>
+<br>
+<div class="card">
+<h2>Paziente</h2>
+<div class="grid">
+<div><label for="kg">Peso reale (kg) – quello in cartella</label><input id="kg" type="number" inputmode="decimal" value="70" min="20" max="250"></div>
+<div><label for="h">Altezza (cm)</label><input id="h" type="number" inputmode="decimal" placeholder="es. 175"></div>
+<div><label for="sex">Sesso</label><select id="sex"><option value="m">M</option><option value="f">F</option></select></div>
+<div><label for="fac">Fattore dose (età/fragilità)</label>
+<select id="fac"><option value="1">100% – standard</option><option value="0.75">75%</option><option value="0.5">50% – anziano/fragile</option><option value="0.35">35%</option></select></div>
+<div><label for="indml">Induzione (ml/10 kg, 1–1,5)</label><input type="number" id="indml" min="1" max="1.5" step="0.05" value="1.25" inputmode="decimal"></div>
+<div><label for="ket">Ketamina</label><select id="ket"><option value="k">Ketamina pura 50 mg/ml (50 mg = 1 ml)</option><option value="s">S-Ketamina (25 mg/ml)</option></select></div>
+</div>
+<p class="note" id="hnote"></p>
+<label><input type="checkbox" id="anx"> Paziente ansioso</label>
+<label><input type="checkbox" id="rsi"> RSI (sequenza rapida)</label>
+<label><input type="checkbox" id="lap"> Laparoscopia</label>
+</div>
+
+<div class="card"><h2>1. Preparazione siringhe</h2><div id="prep"></div></div>
+<div class="card"><h2>2. Pre-carico (10–20 min prima dell'induzione)</h2><div id="load"></div></div>
+<div class="card"><h2>3. Induzione</h2><div id="ind"></div></div>
+<div class="card"><h2>4. Incisione</h2><div id="inc"></div></div>
+<div class="card"><h2>5. Mantenimento</h2><div id="mnt"></div></div>
+<div class="card"><h2>6. Fine intervento (15–30 min prima; negli anziani anche 40 min prima)</h2><div id="end"></div></div>
+<div class="card"><h2>7. PACU e post-PACU</h2><div id="pacu"></div></div>
+<div class="card"><h2>Promemoria</h2>
+<ul class="note">
+<li>Monitorare EMG (BIS) e ANI/NOL: se spike EMG, ANI &lt; 40 o NOL &gt; 20 → bolo Mulimix 0,5–1 ml/10 kg o Dexmedetomidina 5–10 mcg.</li>
+<li>FC ↑: bolo extra e aumentare infusione. FC ↓: ridurre infusione. Tachicardia pre-chirurgia: bolo 0,5–1 ml/10 kg.</li>
+<li>Interventi brevi (&lt;2 h): infusione ridotta o omessa, solo boli.</li>
+<li>Obesi: dosare su LBW/IBW. Tenere pronti metoprololo, nicardipina, efedrina, fenilefrina.</li>
+<li>Associare blocco loco-regionale/infiltrazione ove possibile. Attenzione: chirocaina liposomiale + lidocaina e.v. → rischio tossicità.</li>
+</ul></div>
+<p class="note" style="text-align:center;margin:16px 0">Protocollo OFAM (opioid free general anesthesia mixture) – Mulimix, multimodal anaesthesia sviluppata da Jan Mulier MD PhD e Igor Zadonsky MD. Prima edizione 2010, ultimo aggiornamento novembre 2024. Altre informazioni: www.publicationslist.org/jan.mulier<br>Adattamento italiano e calcolatore sviluppati da Ill.mo Software.</p>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+const f=(x,d=1)=>{const n=Number(x);return (Math.round(n*10**d)/10**d).toString().replace('.',',')};
+const row=(a,b,c='')=>`<tr><td>${a}</td><td class="v">${b}</td><td class="note">${c}</td></tr>`;
+const tbl=r=>`<table>${r.join('')}</table>`;
+const K=1; // ml di protocollo invariati: la miscela viene lasciata un po' sopra i 50 ml, senza NaCl
+function calc(){
+  const actual=parseFloat($('kg').value)||0;
+  const h=parseFloat($('h').value);
+  let kg=actual;
+  if(h>100){
+    const bmi=actual/((h/100)**2), m=$('sex').value==='m';
+    kg=9270*actual/((m?6680:8780)+(m?216:244)*bmi);
+    $('hnote').innerHTML=`<b>LBW usato per i calcoli: ${f(kg)} kg</b> (peso reale ${f(actual)} kg, BMI ${f(bmi)}; formula di Janmahasatian)`;
+  } else $('hnote').innerHTML=`<b>Peso usato per i calcoli: ${f(kg)} kg</b> (peso reale: inserisci altezza e sesso per calcolare il LBW)`;
+  const fac=parseFloat($('fac').value);
+  const s=kg/10, ket=$('ket').value==='s';
+  const ketMg=0.1*kg*fac*(ket?0.5:1);
+  $('prep').innerHTML=(($('anx').checked)?`<p><span class="tag">Premedicazione</span> Clonidina 150 mcg po oppure e.v. (dose e.v. da confermare)</p>`:'')+
+  tbl([
+    row('Siringa 1 "Dexdor load" 5 ml','20 mcg','0,2 ml di Dexdor (fiala 200 mcg/2 ml = 100 mcg/ml) portati a 5 ml con NaCl → 4 mcg/ml'),
+    row('Siringa 2 Ketamina',ket?'1 ml S-ketamina 25 mg/ml':'1 ml ketamina pura 50 mg/ml',ket?'25 mg':'50 mg'),
+    row('Siringa 3 Mulimix (senza NaCl)','','volume finale ≈ 51,5 ml: si accetta di superare di poco i 50 ml (concentrazioni ~97% del protocollo)'),
+    row('&nbsp;&nbsp;Dexmedetomidina','50 mcg','0,5 ml di Dexdor non diluito (100 mcg/ml)'),
+    row('&nbsp;&nbsp;'+(ket?'S-ketamina':'Ketamina'),ket?'25 mg = 1 ml (25 mg/ml)':'50 mg = 1 ml di ketamina pura (50 mg/ml)',''),
+    row('&nbsp;&nbsp;Lidocaina','500 mg','25 ml di lidocaina 2%'),
+    row('&nbsp;&nbsp;Solfato di Mg','2500 mg','25 ml (fiale da 1 g/10 ml = 100 mg/ml)'),
+      ]);
+  const loadMcg=Math.min(30,Math.max(10,0.25*kg))*fac;
+  $('load').innerHTML=tbl([
+    row('Dexmedetomidina 0,25 mcg/kg LBW',`<span class="big">${f(loadMcg/4)} ml</span> <small>(${f(loadMcg)} mcg)</small>`,`siringa 4 mcg/ml (range 10–30 mcg; età, sedazione, PA!)`),
+    row('Desametasone','8 mg','')
+  ]);
+  let ir=parseFloat(String($('indml').value).replace(',','.'));
+  if(!(ir>=1)) ir=1; if(ir>1.5) ir=1.5;
+  let ind=[row('A. Mulimix '+String(ir).replace('.',',')+' ml/10 kg (equiv. 50 ml)',`<span class="big">${f(ir*s*fac*K)} ml</span>`,'dalla siringa Mulimix; range '+f(s*fac*K)+'–'+f(1.5*s*fac*K)+' ml (1–1,5 ml/10 kg)'),
+    row('B. oppure boli (azione lunga, ripetibili ogni ora)','',''),
+    row('&nbsp;&nbsp;Dexmedetomidina',f(0.1*kg*fac,2)+' mcg','0,1 mcg/kg'),
+    row('&nbsp;&nbsp;Lidocaina',f(kg*fac,0)+' mg','1 mg/kg'),
+    row('&nbsp;&nbsp;'+(ket?'S-ketamina':'Ketamina'),f(ketMg,1)+' mg'+(ket?'':' = '+f(ketMg/50,3)+' ml'),'0,1 mg/kg'+(ket?' (S-ket: metà dose)':'')),
+    row('&nbsp;&nbsp;Solfato di Mg',f(5*kg*fac,0)+' mg','5 mg/kg'),
+    row('Poi: Propofol','','titolare sull\'effetto (dose ridotta dalla Mulimix)'),
+    row('Poi: Rocuronio','','con monitoraggio TOF/PTC')];
+  if($('rsi').checked) ind.push(row('RSI: Mg solfato lento e diluito',f(40*kg,0)+' mg','40 mg/kg, prima dell\'induzione o subito dopo rocuronio'));
+  $('ind').innerHTML=tbl(ind);
+  $('inc').innerHTML=tbl([
+    row((ket?'S-ketamina':'Ketamina')+' prima dell\'incisione',ket?'12,5–25 mg':'50 mg = 1 ml (50 mg/ml)','ripetere per ogni incisione cutanea; si può dare metà in induzione'),
+    row('Infiltrazione lidocaina 1% pre-incisione','max 200 mg = 20 ml','ridurre infusione se necessario'),
+    row('Opzionali','','Desametasone/betametasone 10 mg o Solumedrol 40 mg'+($('lap').checked?' (consigliato in laparoscopia)':'')+'; droperidolo 0,625–1,25 mg; Mg extra 40 mg/kg ('+f(40*kg,0)+' mg) se PA alta')
+  ]);
+  $('mnt').innerHTML=tbl([
+    row('A. Mulimix 1 ml/10 kg/h',`<span class="big">${f(s*fac*K)} ml/h</span>`,'siringa Mulimix'),
+    row('B. oppure boli orari','',''),
+    row('&nbsp;&nbsp;Dexmedetomidina',f(0.1*kg*fac,2)+' mcg/h','0,1 mcg/kg/h'),
+    row('&nbsp;&nbsp;Lidocaina',f(kg*fac,0)+' mg/h','1 mg/kg/h'),
+    row('&nbsp;&nbsp;'+(ket?'S-ketamina':'Ketamina'),f(ketMg,1)+' mg/h'+(ket?'':' = '+f(ketMg/50,3)+' ml/h'),'0,1 mg/kg/h'),
+    row('&nbsp;&nbsp;Solfato di Mg',f(5*kg*fac,0)+' mg/h','5 mg/kg/h'),
+    row('Bolo di rescue (spike EMG, ANI&lt;40, NOL&gt;20)',f(0.5*s*fac*K)+'–'+f(s*fac*K)+' ml','oppure Dexmedetomidina 5–10 mcg')
+  ]);
+  $('end').innerHTML=tbl([
+    row('Stop Mulimix','',''),
+    row('Paracetamolo','1 g','infusione rapida, attenzione ipotensione'),
+    row('FANS','','Ketoprofene 1 fl / Diclofenac 75 mg / Parecoxib 40 mg / Ketorolac 30 mg'),
+    row('Infiltrazione ferita a fine intervento: ropivacaina','max '+f(3*kg,0)+' mg','3 mg/kg LBW (1% = 10 mg/ml → '+f(3*kg/10,1)+' ml)'),
+    row('oppure L-bupivacaina','max '+f(Math.min(2*kg,150),0)+' mg','2 mg/kg LBW, max 150 mg (0,5% = 5 mg/ml → '+f(Math.min(2*kg,150)/5,1)+' ml; 0,25% = 2,5 mg/ml → '+f(Math.min(2*kg,150)/2.5,1)+' ml)')
+  ]);
+  $('pacu').innerHTML=tbl([
+    row('Mulimix 0,5 ml/10 kg/h',`<span class="big">${f(0.5*s*fac*K)} ml/h</span>`,'fino a fine siringa o dimissione PACU'),
+    row('&nbsp;&nbsp;Dexmedetomidina',f(0.05*kg*fac,2)+' mcg/h','0,05 mcg/kg/h'),
+    row('&nbsp;&nbsp;Lidocaina',f(0.5*kg*fac,1)+' mg/h','0,5 mg/kg/h'),
+    row('&nbsp;&nbsp;'+(ket?'S-ketamina':'Ketamina'),f(0.05*kg*fac*(ket?0.5:1),2)+' mg/h','0,05 mg/kg/h'),
+    row('&nbsp;&nbsp;Solfato di Mg',f(2.5*kg*fac,1)+' mg/h','2,5 mg/kg/h'),
+    row('Analgesia insufficiente','','bolo '+f(K)+' ml Mulimix; clonidina 75 mcg (max 2×/die); oppioide: morfina o piritramide 2–5 mg e.v.'),
+    row('Post-PACU','','Paracetamolo, FANS; morfina rescue'),
+    row('PCIA Mulimix',f(0.5*s*K)+' ml/h','bolo max '+f(K)+' ml ogni 15 min'),
+    row('Alternativa: procaina 0,1% (1 g/1000 ml)',f(kg)+'–'+f(2*kg)+' ml/h','1–2 ml/kg LBW/h')
+  ]);
+}
+document.querySelectorAll('input,select').forEach(e=>e.addEventListener('input',calc));
+calc();
+</script>
+<script>if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');</script>
+</body>
+</html>
